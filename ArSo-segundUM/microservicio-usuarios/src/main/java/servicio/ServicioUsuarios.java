@@ -1,11 +1,14 @@
 package servicio;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import modelo.Usuario;
+import modelo.UsuarioDTO;
 import repositorio.FactoriaRepositorios;
 import repositorio.IRepositorioUsuarios;
 import repositorio.IRepositorioUsuariosAdHoc;
@@ -81,5 +84,20 @@ public class ServicioUsuarios {
 		} else {
 			throw new RuntimeException("Contraseña errónea.\n");
 		}
+	}
+	
+	public Usuario obtener(String id) {
+		return repositorioUsuarios.get(id);
+	}
+	
+	public List<UsuarioDTO> obtenerListado(){
+		return repositorioUsuarios.listadoUsuarios().stream()
+				.map(this::toDTO)
+				.collect(Collectors.toList());
+	}
+	
+	public UsuarioDTO toDTO(Usuario u) {
+		if(u==null) return null;
+		return new UsuarioDTO(u.getId(),u.getNombre(),u.getApellidos(),u.getEmail());
 	}
 }

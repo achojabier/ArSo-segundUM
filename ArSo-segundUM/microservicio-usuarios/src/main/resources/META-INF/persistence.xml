@@ -8,12 +8,11 @@
 
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
 
-    <persistence-unit name="segundum.productos">
+    <persistence-unit name="segundum.usuarios">
 		
 		
-		<class>productos.modelo.Usuario</class>
-		<class>productos.modelo.Categoria</class>
-		<class>productos.modelo.Producto</class>
+		<class>modelo.Usuario</class>
+		<class>modelo.UsuarioDTO</class>
 		
         <properties>
 
@@ -29,7 +28,7 @@
 
             <property name="javax.persistence.jdbc.url"
 
-                value="jdbc:mysql://localhost:3306/segundum.productos?serverTimezone=CET" />
+                value="jdbc:mysql://localhost:3306/segundum.usuarios?serverTimezone=CET" />
 
             <property name="eclipselink.ddl-generation"
 

@@ -1,4 +1,4 @@
-package utils;
+package productos.utils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -11,7 +11,7 @@ public class EntityManagerHelper {
 
 	static {
 
-		entityManagerFactory = Persistence.createEntityManagerFactory("segundum.usuarios");
+		entityManagerFactory = Persistence.createEntityManagerFactory("segundum.productos");
 
 		entityManagerHolder = new ThreadLocal<EntityManager>();
 

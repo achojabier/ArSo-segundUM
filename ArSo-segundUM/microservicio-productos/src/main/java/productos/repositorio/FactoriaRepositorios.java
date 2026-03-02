@@ -1,4 +1,4 @@
-package repositorio;
+package productos.repositorio;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -8,7 +8,7 @@ public class FactoriaRepositorios {
 	
 	public FactoriaRepositorios() {
 		if (emf == null || !emf.isOpen()) {
-            emf = Persistence.createEntityManagerFactory("segundum.usuarios");
+            emf = Persistence.createEntityManagerFactory("segundum.productos");
         }
 	}
 	
@@ -17,6 +17,13 @@ public class FactoriaRepositorios {
 		
 	}
 	
+	public IRepositorioCategoriasAdHoc getRepositorioCategorias() {
+		return new RepositorioCategoriasAdHocJPA(emf);
+	}
+	
+	public IRepositorioProductosAdHoc getRepositorioProductos() {
+		return new RepositorioProductosAdHocJPA(emf);
+	}
 	
 	public static void close() {
         if (emf != null && emf.isOpen()) {

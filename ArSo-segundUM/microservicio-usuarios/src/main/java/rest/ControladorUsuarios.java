@@ -1,9 +1,13 @@
 package rest;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -17,6 +21,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.glassfish.jersey.http.HttpHeaders;
+
+import auth.Credenciales;
+import auth.JwtUtils;
 import modelo.UsuarioDTO;
 import rest.Listado;
 import rest.Listado.ResumenExtendido;
@@ -32,7 +40,40 @@ public class ControladorUsuarios {
 	@Context
 	private UriInfo uriInfo;
 	
+	@POST
+	@Path("/login")
+	@PermitAll
+	@Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+	public Response login(Credenciales credenciales) {
+		try {
+            Usuario usuario = servicio.buscar(credenciales.getEmail(), credenciales.getClave());
+            
+            if (usuario != null) {
+                Map<String, Object> claims = new HashMap<>();
+                claims.put("sub", usuario.getId());
+                claims.put("roles", "USUARIO");     
+                
+               
+                String token = JwtUtils.generateToken(claims);
+                
+
+                return Response.ok()
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .entity(token) 
+                        .build();
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED)
+                        .entity("Credenciales incorrectas")
+                        .build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+	}
+	
 	@GET
+	@RolesAllowed("USUARIO")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getListadoUsuarios(@QueryParam("email") String email, @QueryParam("clave") String clave) throws Exception {
 		
@@ -68,6 +109,7 @@ public class ControladorUsuarios {
 	
 	@GET
 	@Path("{id}")
+	@RolesAllowed("USUARIO")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUsuario(@PathParam("id") String id) throws Exception{
 		if(servicio.obtener(id)==null) {
@@ -77,6 +119,7 @@ public class ControladorUsuarios {
 	}
 	
 	@POST
+	@PermitAll
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response altaUsuario(Usuario u) throws Exception{
 		try {
@@ -89,6 +132,7 @@ public class ControladorUsuarios {
 	}
 	
 	@PUT
+	@RolesAllowed("USUARIO")
 	@Path("{id}")
 	public Response modificarUsuario(@PathParam("id") String id, Usuario u) {
 		try {

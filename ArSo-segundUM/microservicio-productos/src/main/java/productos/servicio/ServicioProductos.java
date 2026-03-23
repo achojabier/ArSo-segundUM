@@ -10,6 +10,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,15 +30,16 @@ import productos.repositorio.IRepositorioProductosAdHoc;
 import productos.repositorio.IRepositorioProductosSpring;
 import productos.repositorio.IRepositorioUsuarios;
 import productos.repositorio.IRepositorioUsuariosSpring;
+import productos.rest.dto.ProductoDTO;
 
 @Service
 @Transactional
-@ApplicationScoped
-public class ServicioProductos implements Serializable{
+public class ServicioProductos{
 	private final IRepositorioProductosSpring repositorioProductos;
 	private IRepositorioCategoriasSpring repositorioCategorias;
 	private IRepositorioUsuariosSpring repositorioUsuarios;
-	
+	@Autowired
+	private IPublicadorEventos publicadorEventos;
 	
 	public ServicioProductos(IRepositorioProductosSpring rp, IRepositorioCategoriasSpring sc, IRepositorioUsuariosSpring ru) {
 		this.repositorioProductos=rp;
@@ -44,11 +48,11 @@ public class ServicioProductos implements Serializable{
 	}
 	
 	public String altaProducto(String titulo, String descripcion, double precio, EstadoProducto estado, String idCategoria, boolean envio, String idVendedor) {
-		Usuario u = repositorioUsuarios.getById(idVendedor);
+		Usuario u = repositorioUsuarios.findById(idVendedor).orElse(null);
 		if (u==null) {
 			throw new RuntimeException("No hay ningún usuario vinculado al id "+idVendedor+".\n");
 		}
-		Categoria c = repositorioCategorias.getById(idCategoria);
+		Categoria c = repositorioCategorias.findById(idCategoria).orElse(null);
 		if (c==null) {
 			throw new RuntimeException("No hay ninguna categoría vinculada al id "+idCategoria+".\n");
 		}
@@ -91,6 +95,7 @@ public class ServicioProductos implements Serializable{
 		p.setVisualizaciones(0);
 		repositorioProductos.save(p);
 		System.out.println("producto"+p.getId()+"\n");
+		publicadorEventos.emitirEvento("alta-producto", p.getId(), p.getVendedor().getId());
 		return p.getId();
 	}
 	
@@ -98,16 +103,17 @@ public class ServicioProductos implements Serializable{
 		if(descripcion == null || descripcion.trim().isEmpty()) {
 			throw new IllegalArgumentException("Descripción vacía.\n");
 		}
-		Producto p = repositorioProductos.getById(id);
+		Producto p = repositorioProductos.findById(id).orElse(null);
 		if(p == null) {
 			throw new RuntimeException("Producto no encontrado con ID: " + id);
 		}
 		p.establecerRecogida(longitud, latitud, descripcion);
 		repositorioProductos.save(p);
+		publicadorEventos.emitirEvento("asignar-recogida", id, p.getVendedor().getId());
 	}
 	
 	public void modificarProducto(String id, Double precio, String descripcion) {
-		Producto p = repositorioProductos.getById(id);
+		Producto p = repositorioProductos.findById(id).orElse(null);
 		if(p == null) {
 			throw new RuntimeException("Producto no encontrado con ID: " + id);
 		}
@@ -123,10 +129,11 @@ public class ServicioProductos implements Serializable{
 			p.setDescripcion(descripcion);
 		}
 		repositorioProductos.save(p);
+		publicadorEventos.emitirEvento("modificar-producto", id, p.getVendedor().getId());
 	}
 	
 	public void sumarVisualizacion(String id) {
-		Producto p = repositorioProductos.getById(id);
+		Producto p = repositorioProductos.findById(id).orElse(null);
 		if(p == null) {
 			throw new RuntimeException("Producto no encontrado con ID: " + id);
 		}
@@ -140,7 +147,7 @@ public class ServicioProductos implements Serializable{
 	public List<Producto> buscarProductos(String idCategoria, String descripcion, EstadoProducto estado, double precioMax){
 		Categoria c = null;
 		if(idCategoria!=null && !idCategoria.trim().isEmpty()) {
-			c = repositorioCategorias.getById(idCategoria);
+			c = repositorioCategorias.findById(idCategoria).orElse(null);
 			if(c==null) {
 				throw new RuntimeException("Categoría de búsqueda no encontrada: " + idCategoria);
 			}
@@ -151,8 +158,33 @@ public class ServicioProductos implements Serializable{
 		return repositorioProductos.productsBySeller(idVendedor);
 	}
 	public Producto obtenerProducto(String id) {
-		return repositorioProductos.getById(id);
+		return repositorioProductos.findById(id).orElse(null);
     }
 	
+	public Page<ProductoResumen> getListadoPaginado(Pageable pageable) {
+		 
+		 return this.repositorioProductos.findAll(pageable).map(encuesta -> {
+			 ProductoResumen resumen = new ProductoResumen();
+			 resumen.setId(encuesta.getId());
+			 resumen.setTitulo(encuesta.getTitulo());
+			 return resumen;
+		 });
+	}
+
+	public void marcarComoVendido(String idProducto) {
+		Producto p = repositorioProductos.findById(idProducto).orElse(null);
+		p.setVendido(true);
+		repositorioProductos.save(p);
+	}
+
+	public void borrarProductosDeVendedor(String idUsuario) {
+		List<Producto> productos = recuperarProductosVendedor(idUsuario);
+		for(Producto p: productos) {
+			borrarProducto(p.getId());
+		}
+	}
 	
+	public void borrarProducto(String id) {
+		repositorioProductos.deleteById(id);
+	}
 }

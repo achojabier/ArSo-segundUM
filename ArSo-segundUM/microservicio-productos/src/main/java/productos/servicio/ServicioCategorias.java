@@ -11,6 +11,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +27,14 @@ import productos.repositorio.IRepositorioCategoriasSpring;
 public class ServicioCategorias {
 	private IRepositorioCategoriasSpring repositorioCategorias;
 	
+	@Autowired
 	public ServicioCategorias (IRepositorioCategoriasSpring sc) {
 		this.repositorioCategorias=sc;
 	}
 	
+	
 	public Categoria getCategoria(String id) {
-		return repositorioCategorias.getById(id);
+		return repositorioCategorias.findById(id).orElse(null);
 	}
 	
 	public void cargarJerarquia(String ruta) {
@@ -40,7 +43,7 @@ public class ServicioCategorias {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			File fichero = new File(ruta);
 			Categoria raiz = (Categoria) unmarshaller.unmarshal(fichero);
-			if(repositorioCategorias.getById(raiz.getId())==null) {
+			if(repositorioCategorias.findById(raiz.getId())==null) {
 				vincularPadres(raiz);
 				repositorioCategorias.save(raiz);
 			}
@@ -62,7 +65,7 @@ public class ServicioCategorias {
 	}
 	
 	public void modificar(String id,String descripcion) {
-		Categoria c = repositorioCategorias.getById(id);
+		Categoria c = repositorioCategorias.findById(id).orElse(null);
 		if(c==null) {
 			throw new RuntimeException("Categoría con ID " + id+ "no encontrada.\n");
 		}
@@ -77,21 +80,15 @@ public class ServicioCategorias {
 	}
 	
 	public List<Categoria> getHijos(String id){
-		Categoria c = repositorioCategorias.getById(id);
+		Categoria c = repositorioCategorias.findById(id).orElse(null);
 		if(c==null) {
 			throw new RuntimeException("Categoría con ID " + id+ "no encontrada.\n");
 		}
 		String patronRuta = c.getRuta() + "%";
-		return repositorioCategorias.getDescendientes(patronRuta,c);
+		return repositorioCategorias.getDescendientes(patronRuta,c.getId());
 	}
 	
 	public List<Categoria> getTodasCategorias(){
-		List<Categoria> raices = getRaices();
-		List<Categoria> categorias = new ArrayList<>();
-		for(Categoria c: raices) {
-			categorias.add(c);
-			categorias.addAll(getHijos(c.getId()));
-		}
-		return categorias;
+		return repositorioCategorias.findAll();
 	}
 }

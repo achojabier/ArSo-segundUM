@@ -5,14 +5,6 @@ import java.util.Map;
 
 import utils.PropertiesReader;
 
-/*
- * Factoría que encapsula la implementación de un servicio.
- * 
- * Utiliza un fichero de propiedades para cargar la implementación.
- *
- * Los servicios se gestionan como un singleton (instancia única).
- *
- */
 
 public class FactoriaServicios {
 	
@@ -40,8 +32,7 @@ public class FactoriaServicios {
 			}
 			catch (Exception e) {
 				
-				e.printStackTrace(); // útil para depuración
-				
+				e.printStackTrace();
 				throw new RuntimeException("No se ha podido obtener la implementación del servicio: " + servicio.getName());
 			}
 			

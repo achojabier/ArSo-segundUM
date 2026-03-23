@@ -30,6 +30,7 @@ public class Producto {
 	private Categoria categoria;
 	private int visualizaciones;
 	private boolean envioDisponible;
+	private boolean vendido;
 	@Embedded
 	@AttributeOverrides({
 		@AttributeOverride(name = "descripcion", column = @Column(name = "RECOGIDA_DESCRIPCION"))
@@ -38,7 +39,7 @@ public class Producto {
 	@ManyToOne
 	private Usuario vendedor;
 	public Producto() {
-		
+		vendido = false;
 	}
 	
 	public String getId() {
@@ -108,6 +109,16 @@ public class Producto {
 		this.vendedor = vendedor;
 	}
 	
+	
+	
+	public boolean isVendido() {
+		return vendido;
+	}
+
+	public void setVendido(boolean vendido) {
+		this.vendido = vendido;
+	}
+
 	public void establecerRecogida(double longitud, double latitud, String descripcion) {
 		this.recogida = new LugarDeRecogida();
 		recogida.setLatitud(longitud);

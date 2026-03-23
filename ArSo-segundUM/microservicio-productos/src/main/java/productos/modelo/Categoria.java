@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "categorias")
 @XmlRootElement(name="categoria")
@@ -38,7 +40,8 @@ public class Categoria {
 	@XmlTransient
 	private Categoria padre;
 	@XmlElement(name="categoria")
-	@OneToMany(mappedBy = "padre", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "padre", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Categoria> subcategorias = new ArrayList<>();
 	
 	public Categoria() {

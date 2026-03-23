@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import modelo.Usuario;
 import modelo.UsuarioDTO;
@@ -16,14 +17,16 @@ import repositorio.IRepositorioUsuariosAdHoc;
 @ApplicationScoped
 public class ServicioUsuarios {
 	private IRepositorioUsuariosAdHoc repositorioUsuarios;
-	
+	private IPublicadorUsuarios publicadorUsuarios;
 	public ServicioUsuarios() {
         FactoriaRepositorios factoria = new FactoriaRepositorios();
         this.repositorioUsuarios = factoria.getRepositorioUsuarios();
+        this.publicadorUsuarios = new PublicadorUsuarios();
     }
 	
 	public ServicioUsuarios(IRepositorioUsuariosAdHoc ru) {
 		this.repositorioUsuarios = ru;
+		this.publicadorUsuarios = new PublicadorUsuarios();
 	}
 	
 	public String altaUsuario(String nombre, String apellidos, String email, String clave, Date fechaNacimiento, String tlf) {
@@ -43,6 +46,7 @@ public class ServicioUsuarios {
 		usuario.setId(id);
 		
 		this.repositorioUsuarios.add(usuario);
+		publicadorUsuarios.emitirEvento("usuario-creado", id, nombre, apellidos,email, null, null, null);
 		return id;
 	}
 	
@@ -70,6 +74,7 @@ public class ServicioUsuarios {
 	    usuario.setTelefono(tlf);
 	    
 	    this.repositorioUsuarios.update(usuario);
+	    publicadorUsuarios.emitirEvento("modificar-usuario", id, nombre, apellidos, clave,null, fechaNacimiento.toString(), tlf);
 	}
 	
 	public Usuario buscar(String email, String password) {
@@ -99,5 +104,19 @@ public class ServicioUsuarios {
 	public UsuarioDTO toDTO(Usuario u) {
 		if(u==null) return null;
 		return new UsuarioDTO(u.getId(),u.getNombre(),u.getApellidos(),u.getEmail());
+	}
+	
+	public void sumarCompra(String idUsuario) {
+		Usuario u = repositorioUsuarios.get(idUsuario);
+		u.sumarCompra();
+		repositorioUsuarios.update(u);
+		System.out.println("Sumando COMPRA al usuario: " + u.getNombre() + " | ID Real en BD: " + u.getId());
+	}
+	
+	public void sumarVenta(String idUsuario) {
+		Usuario u = repositorioUsuarios.get(idUsuario);
+		u.sumarVenta();
+		repositorioUsuarios.update(u);
+		System.out.println("Sumando VENTA al usuario: " + u.getNombre() + " | ID Real en BD: " + u.getId());
 	}
 }

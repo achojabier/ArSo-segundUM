@@ -24,7 +24,7 @@ public class ServicioUsuarios {
 		this.repositorioUsuarios = ru;
 	}
 	
-	public String altaUsuario(String nombre, String apellidos, String email) {
+	public String altaUsuario(String id, String nombre, String apellidos, String email) {
 		if (nombre == null || nombre.trim().isEmpty()) throw new IllegalArgumentException("El nombre es obligatorio");
         if (apellidos == null || apellidos.trim().isEmpty()) throw new IllegalArgumentException("Los apellidos son obligatorios");
         if (email == null || email.trim().isEmpty()) throw new IllegalArgumentException("El email es obligatorio");
@@ -33,16 +33,14 @@ public class ServicioUsuarios {
         	throw new IllegalArgumentException("El usuario con email " + email + " ya existe.");
         }
 		Usuario usuario = new Usuario(nombre,apellidos,email);
-		
-		String id = UUID.randomUUID().toString();
-		
+
 		usuario.setId(id);
 		
 		this.repositorioUsuarios.save(usuario);
 		return id;
 	}
 	
-	public void modificarUsuario(String id, String nombre, String apellidos, String clave, Date fechaNacimiento, String tlf) {
+	public void modificarUsuario(String id, String nombre, String apellidos) {
 		Usuario usuario = this.repositorioUsuarios.getById(id);
 		if(usuario==null) {
 			throw new RuntimeException("Usuario con ID " + id+ "no encontrado\n");

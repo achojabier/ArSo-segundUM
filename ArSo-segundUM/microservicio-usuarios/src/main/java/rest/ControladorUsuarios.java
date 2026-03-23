@@ -1,6 +1,7 @@
 package rest;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +74,8 @@ public class ControladorUsuarios {
 	}
 	
 	@GET
-	@RolesAllowed("USUARIO")
+	//@RolesAllowed("USUARIO")
+	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getListadoUsuarios(@QueryParam("email") String email, @QueryParam("clave") String clave) throws Exception {
 		
@@ -109,7 +111,8 @@ public class ControladorUsuarios {
 	
 	@GET
 	@Path("{id}")
-	@RolesAllowed("USUARIO")
+	//@RolesAllowed("USUARIO")
+	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUsuario(@PathParam("id") String id) throws Exception{
 		if(servicio.obtener(id)==null) {
@@ -127,12 +130,14 @@ public class ControladorUsuarios {
 			URI nuevaURL = this.uriInfo.getAbsolutePathBuilder().path(id).build();
 			return Response.created(nuevaURL).build();
 		} catch(Exception e){
+				e.printStackTrace();
 				throw new IllegalArgumentException("Usuario erróneo, compruebe que todos los datos están bien.");
 			}
 	}
 	
 	@PUT
-	@RolesAllowed("USUARIO")
+	//@RolesAllowed("USUARIO")
+	@PermitAll
 	@Path("{id}")
 	public Response modificarUsuario(@PathParam("id") String id, Usuario u) {
 		try {
@@ -141,5 +146,14 @@ public class ControladorUsuarios {
 		} catch(Exception e){
 			throw new IllegalArgumentException("Usuario erróneo, compruebe que todos los datos están bien.");
 		}
+	}
+	
+	@GET
+	@PermitAll
+	@Path("/{id}/nombre")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getNombreUsuario(@PathParam("id") String id) {
+		Usuario u = servicio.obtener(id);
+	    return Response.ok(Collections.singletonMap("nombre", u.getNombre() +" " + u.getApellidos())).build();
 	}
 }

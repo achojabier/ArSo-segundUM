@@ -19,7 +19,7 @@ public class Usuario {
     private Date fechaNacimiento;
     private String telefono;
     private boolean administrador;
-
+    private int nCompras, nVentas;
     public Usuario(){
 
     }
@@ -96,6 +96,32 @@ public class Usuario {
         this.fechaNacimiento=fecha;
         this.telefono=(tlf!=null)?tlf: null;
         this.administrador=false;
+        nCompras = 0;
+        nVentas = 0;
+    }
+
+	public int getnCompras() {
+		return nCompras;
+	}
+
+	public void setnCompras(int nCompras) {
+		this.nCompras = nCompras;
+	}
+
+	public int getnVentas() {
+		return nVentas;
+	}
+
+	public void setnVentas(int nVentas) {
+		this.nVentas = nVentas;
+	}
+    
+    public void sumarVenta() {
+    	this.nVentas++;
+    }
+    
+    public void sumarCompra() {
+    	this.nCompras++;
     }
 
 	/*public String altaUsuario(String nombre, String apellidos, String email, Date fecha, String tlf) {

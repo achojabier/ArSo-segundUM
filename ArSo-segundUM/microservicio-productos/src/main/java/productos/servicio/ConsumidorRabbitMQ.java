@@ -31,7 +31,7 @@ public class ConsumidorRabbitMQ {
     public void recibirEventoUsuario(Message mensaje) {
         try {
         	String jsonMensaje = new String(mensaje.getBody());
-            System.out.println("📥 Productos recibe evento de Usuario: " + jsonMensaje);
+            System.out.println("Productos recibe evento de Usuario: " + jsonMensaje);
             
             
             Map<String, Object> evento = objectMapper.readValue(jsonMensaje, new TypeReference<Map<String, Object>>() {});
@@ -50,7 +50,7 @@ public class ConsumidorRabbitMQ {
             }
             
         } catch (Exception e) {
-            System.err.println("🚨 Error leyendo evento en Productos: " + e.getMessage());
+            System.err.println("Error leyendo evento en Productos: " + e.getMessage());
         }
     }
     
@@ -64,7 +64,6 @@ public class ConsumidorRabbitMQ {
             String jsonMensaje = new String(mensajeAmqp.getBody());
             System.out.println("Productos recibe evento de Compraventa: " + jsonMensaje);
             
-            // Usamos tu truco del objectMapper para evitar la doble serialización
             if (jsonMensaje.startsWith("\"")) {
                 jsonMensaje = objectMapper.readValue(jsonMensaje, String.class);
             }

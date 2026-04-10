@@ -7,7 +7,7 @@
     <groupId>segundUM</groupId>
     <artifactId>microservicio-compraventas</artifactId>
     <version>1.0-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
   <properties>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
@@ -22,6 +22,15 @@
 		<relativePath />
 	</parent>
     <dependencies>
+    	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
     	<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -116,15 +125,12 @@
 		</dependency>
     </dependencies>
         <build>
-	    <pluginManagement>
-	        <plugins>
-	            <plugin>
-	                <groupId>org.eclipse.jetty</groupId>
-	                <artifactId>jetty-maven-plugin</artifactId>
-	                <version>9.4.53.v20231009</version>
-	            </plugin>
-	        </plugins>
-	    </pluginManagement>
-	</build>
+		    <plugins>
+		        <plugin>
+		            <groupId>org.springframework.boot</groupId>
+		            <artifactId>spring-boot-maven-plugin</artifactId>
+		        </plugin>
+		    </plugins>
+		</build>
 
 </project>

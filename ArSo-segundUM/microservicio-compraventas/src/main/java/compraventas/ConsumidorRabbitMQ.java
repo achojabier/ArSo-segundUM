@@ -42,7 +42,7 @@ public class ConsumidorRabbitMQ {
             }
 
         } catch (JsonProcessingException e) {
-            System.err.println("🚨 Error al leer el JSON del evento: " + e.getMessage());
+            System.err.println("Error al leer el JSON del evento: " + e.getMessage());
         }
     }
 }

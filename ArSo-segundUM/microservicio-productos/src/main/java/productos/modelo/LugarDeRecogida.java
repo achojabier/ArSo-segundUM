@@ -1,5 +1,6 @@
 package productos.modelo;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 
@@ -7,8 +8,10 @@ import javax.persistence.Lob;
 public class LugarDeRecogida {
 	@Lob
 	private String descripcion;
-	private double latitud;
-	private double longitud;
+	@Column(nullable = true)
+	private Double latitud;
+	@Column(nullable = true)
+	private Double longitud;
 	public LugarDeRecogida() {
 		
 	}
@@ -21,13 +24,13 @@ public class LugarDeRecogida {
 	public double getLatitud() {
 		return latitud;
 	}
-	public void setLatitud(double latitud) {
+	public void setLatitud(Double latitud) {
 		this.latitud = latitud;
 	}
 	public double getLongitud() {
 		return longitud;
 	}
-	public void setLongitud(double longitud) {
+	public void setLongitud(Double longitud) {
 		this.longitud = longitud;
 	}
 }

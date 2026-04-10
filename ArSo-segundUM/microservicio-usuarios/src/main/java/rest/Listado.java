@@ -29,7 +29,6 @@ public class Listado {
 	}
 
 	private List<ResumenExtendido> usuario;
-	// Métodos get y set
 
 	public List<ResumenExtendido> getUsuario() {
 		return usuario;

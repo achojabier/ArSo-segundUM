@@ -89,7 +89,7 @@ public class ServicioProductos{
 		p.setCategoria(c);
 		p.setVendedor(u);
 		p.setEnvioDisponible(envio);
-		
+		p.setRecogida(new LugarDeRecogida());
 		p.setId(UUID.randomUUID().toString());
 		p.setFechaPublicacion(LocalDateTime.now());
 		p.setVisualizaciones(0);
@@ -186,5 +186,9 @@ public class ServicioProductos{
 	
 	public void borrarProducto(String id) {
 		repositorioProductos.deleteById(id);
+	}
+
+	public List<Producto> productosDeUsuario(String idUsuario) {
+		return repositorioProductos.findByVendedorId(idUsuario);
 	}
 }

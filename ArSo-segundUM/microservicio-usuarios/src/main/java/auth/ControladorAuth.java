@@ -10,10 +10,6 @@ import javax.ws.rs.core.Response;
 
 @Path("auth")
 public class ControladorAuth {
-
-	// curl -X POST -H "Content-Type: application/x-www-form-urlencoded"  -d "username=juan&password=clave" http://localhost:8080/api/auth/login
-	
-	// eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuIiwicm9sZXMiOiJQUk9GRVNPUiIsImV4cCI6MTc3MTQ5Nzc0NX0.l9L7hXmcuhHDKJiI0FBHnmw1zOBQcwgAvM01tqtoNxg
 	
 	@POST
 	@Path("/login")

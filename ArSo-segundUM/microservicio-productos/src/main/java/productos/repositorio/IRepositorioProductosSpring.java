@@ -19,4 +19,6 @@ public interface IRepositorioProductosSpring extends IRepositorioProductos, JpaR
 	
 	@Query("SELECT p FROM Producto p WHERE p.vendedor.id = :idVendedor")
 	public List<Producto> productsBySeller(@Param("idVendedor")String id);
+	
+	public List<Producto> findByVendedorId(String id);
 }

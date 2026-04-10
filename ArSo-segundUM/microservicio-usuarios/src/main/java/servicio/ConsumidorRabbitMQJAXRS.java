@@ -15,7 +15,7 @@ public class ConsumidorRabbitMQJAXRS implements ServletContextListener {
     private static final String EXCHANGE_NAME = "bus";
     private static final String QUEUE_NAME = "usuarios.cola";
     private static final String ROUTING_KEY = "bus.compraventas.compraventa-creada";
-    private static final String HOST = "localhost";
+    private static final String HOST = "rabbitmq";
 
     private Connection connection;
     private Channel channel;
@@ -81,7 +81,7 @@ public class ConsumidorRabbitMQJAXRS implements ServletContextListener {
         try {
             if (channel != null && channel.isOpen()) channel.close();
             if (connection != null && connection.isOpen()) connection.close();
-            System.out.println("🛑 Conexión de RabbitMQ cerrada en Usuarios.");
+            System.out.println("Conexión de RabbitMQ cerrada en Usuarios.");
         } catch (Exception e) {
             e.printStackTrace();
         }

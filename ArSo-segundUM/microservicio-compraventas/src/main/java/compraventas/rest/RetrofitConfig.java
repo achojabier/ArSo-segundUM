@@ -14,7 +14,7 @@ public class RetrofitConfig {
     @Bean
     public APIProductos apiProductos() {
         return new Retrofit.Builder()
-                .baseUrl("http://localhost:8080/") 
+                .baseUrl("http://productos:8080/") 
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build()
                 .create(APIProductos.class);
@@ -23,7 +23,7 @@ public class RetrofitConfig {
     @Bean
     public APIUsuarios apiUsuarios() {
         return new Retrofit.Builder()
-                .baseUrl("http://localhost:8082/api/") 
+                .baseUrl("http://usuarios:8082/api/") 
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build()
                 .create(APIUsuarios.class);

@@ -15,6 +15,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,6 +63,7 @@ public class ControladorProductos {
 	}
 	
 	@PostMapping
+	@PreAuthorize("hasRole('USUARIO') and #producto.idVendedor == principal")
 	public ResponseEntity<Void> crearProducto(@Valid @RequestBody CrearProductoDTO producto){
 		String id = this.sp.altaProducto(producto.getTitulo(), producto.getDescripcion(),producto.getPrecio(), producto.getEstado(), producto.getIdCategoria(), producto.isEnvioDisponible(),producto.getIdVendedor());
 		URI nuevaURL = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(id).toUri();
@@ -84,12 +86,14 @@ public class ControladorProductos {
 	}
 	
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('USUARIO') and @servicioProductos.obtenerProducto(#id).vendedor.id == principal")
 	public ResponseEntity<Void> modificarProducto(@Valid @RequestBody ModificarProductoDTO producto, @PathVariable String id){
 		sp.modificarProducto(id, producto.getPrecio(), producto.getDescripcion());
 		return ResponseEntity.noContent().build();
 	}
 	
     @PutMapping("/{id}/recogida")
+    @PreAuthorize("hasRole('USUARIO') and @servicioProductos.obtenerProducto(#id).vendedor.id == principal")
     public ResponseEntity<Void> asignarRecogida(@PathVariable String id, @RequestBody RecogidaDTO dto) {
         this.sp.asignarLugarDeRecogida(id, dto.getLongitud(), dto.getLatitud(), dto.getDescripcion());
         return ResponseEntity.noContent().build();
@@ -105,5 +109,13 @@ public class ControladorProductos {
                 .collect(Collectors.toList());
                 
         return ResponseEntity.ok(dtos);
+    }
+    
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<List<Producto>> obtenerProductosDeUsuario(@PathVariable String idUsuario) {
+        
+        List<Producto> productosDelUsuario = sp.productosDeUsuario(idUsuario);
+		
+        return ResponseEntity.ok(productosDelUsuario);
     }
 }

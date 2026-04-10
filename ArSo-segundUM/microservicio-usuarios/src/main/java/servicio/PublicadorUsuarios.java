@@ -15,7 +15,7 @@ import com.rabbitmq.client.ConnectionFactory;
 @ApplicationScoped
 public class PublicadorUsuarios implements IPublicadorUsuarios{
 	private static final String EXCHANGE_NAME = "bus";
-    private static final String HOST = "localhost";
+    private static final String HOST = "rabbitmq";
     private final ObjectMapper objectMapper = new ObjectMapper();
     
     public PublicadorUsuarios() {

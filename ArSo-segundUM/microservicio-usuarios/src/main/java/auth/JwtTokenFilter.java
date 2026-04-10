@@ -31,21 +31,17 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) {
 		
-		System.out.println("⚠️ EL FILTRO SE ESTÁ EJECUTANDO ⚠️");
-		
 		String path = requestContext.getUriInfo().getPath();
 		
-		 // Comprobamos si la ruta tiene la anotación @PermitAll
 		 if (resourceInfo.getResourceMethod().isAnnotationPresent(PermitAll.class)) {
 			 return; 
 		 }
 		
-		// rutas públicas
 		if (path.equals("auth/login")) {
 			return; // no se controla la autorización
 		}
 
-		// Implementación del control de autorización
+		//Control de autorización
 		String authorization = requestContext.getHeaderString("Authorization");
 
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -54,14 +50,12 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 		} else {
 			String token = authorization.substring("Bearer ".length()).trim();
 			try {
-				// Validar el token ...
 				Claims claims = JwtUtils.validateToken(token);
 				
 				this.servletRequest.setAttribute("claims", claims);
 				
 				Set<String> roles = new HashSet<>(Arrays.asList(claims.get("roles", String.class).split(",")));
 
-				// Consulta si la operación está protegida por rol
 				if (this.resourceInfo.getResourceMethod().isAnnotationPresent(RolesAllowed.class)) {
 
 					String[] allowedRoles = resourceInfo.getResourceMethod().getAnnotation(RolesAllowed.class).value();
@@ -71,7 +65,7 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 								Response.status(Response.Status.FORBIDDEN).entity("no tiene rol de acceso").build());
 					}
 				}
-			} catch (Exception e) { // Error de validación
+			} catch (Exception e) { 
 				requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(e.getMessage()).build());
 			}
 		}

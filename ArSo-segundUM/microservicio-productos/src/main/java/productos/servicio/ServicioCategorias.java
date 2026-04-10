@@ -3,6 +3,7 @@ package productos.servicio;
 
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,11 +42,16 @@ public class ServicioCategorias {
 		try {
 			JAXBContext context = JAXBContext.newInstance(Categoria.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			File fichero = new File(ruta);
-			Categoria raiz = (Categoria) unmarshaller.unmarshal(fichero);
-			if(repositorioCategorias.findById(raiz.getId())==null) {
+			InputStream is = getClass().getResourceAsStream(ruta);
+			if (is == null) {
+				throw new RuntimeException("No se ha encontrado el archivo: " + ruta);
+			}
+			Categoria raiz = (Categoria) unmarshaller.unmarshal(is);
+			System.out.println("   --> XML Parseado. ID raíz: " + raiz.getId() + " | Nombre: " + raiz.getNombre());
+			if(!repositorioCategorias.existsById(raiz.getId())) {
 				vincularPadres(raiz);
 				repositorioCategorias.save(raiz);
+				System.out.println("   --> ✅ Guardada en base de datos la categoría: " + raiz.getNombre());
 			}
 			
 		} catch (Exception e) {

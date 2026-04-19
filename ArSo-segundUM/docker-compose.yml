@@ -7,13 +7,15 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: "segundum.usuarios"
-
+    volumes:
+      - mysql_data:/var/lib/mysql
   mongodb:
     image: mongo:latest
     container_name: mongodb
     ports:
       - "27017:27017"
-
+    volumes:
+      - mongo_data:/data/db
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -25,7 +27,11 @@ services:
     build: ./microservicio-usuarios
     container_name: usuarios
     ports:
-      - "8082:8082"
+      - "8082:8080"
+    environment:
+      - JDBC_URL=jdbc:mysql://mysql:3306/segundum.usuarios?serverTimezone=UTC
+      - JDBC_USER=root
+      - JDBC_PASSWORD=root
     depends_on:
       - mysql
       - rabbitmq
@@ -64,7 +70,7 @@ services:
       - "8090:8090"
     environment:
       - "ZUUL_ROUTES_PRODUCTOS_URL=http://productos:8080"
-      - "ZUUL_ROUTES_USUARIOS_URL=http://usuarios:8082"
+      - "ZUUL_ROUTES_USUARIOS_URL=http://usuarios:8082/api"
       - "ZUUL_ROUTES_COMPRAVENTAS_URL=http://compraventas:8081"
       - "SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTID=Ov23li1l5u6GwOWnVeyu"
       - "SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENTSECRET=fc9bb470683b91670f566150d30dcd8bb3436bab"
@@ -73,3 +79,6 @@ services:
       - productos
       - compraventas
     restart: on-failure
+volumes:
+  mysql_data:
+  mongo_data:

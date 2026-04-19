@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,9 +28,9 @@ public class ControladorAuth {
 
     private UsuariosRestCliente usuariosClient;
 
-    public ControladorAuth() {
+    public ControladorAuth(@Value("${ZUUL_ROUTES_USUARIOS_UR}") String urlUsuarios) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:8082/api/") 
+                .baseUrl(urlUsuarios) 
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         

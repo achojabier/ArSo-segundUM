@@ -28,7 +28,7 @@ public class ConsumidorRabbitMQ {
     ))
     public void recibirMensaje(String jsonMensaje) {
         try {
-            System.out.println("📥 Compraventas recibe evento: " + jsonMensaje);
+            System.out.println("Compraventas recibe evento: " + jsonMensaje);
             
             Map<String, Object> evento = objectMapper.readValue(jsonMensaje, new TypeReference<Map<String, Object>>() {});
             

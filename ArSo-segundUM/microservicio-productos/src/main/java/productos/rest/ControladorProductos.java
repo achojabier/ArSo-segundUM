@@ -118,4 +118,21 @@ public class ControladorProductos {
 		
         return ResponseEntity.ok(productosDelUsuario);
     }
+    
+    @PutMapping("/{id}/visualizacion")
+    public ResponseEntity<Void> addVisualizacion(@PathVariable String id) {
+        this.sp.sumarVisualizacion(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/historial")
+    public ResponseEntity<List<ProductoDTO>> historialDelMes(
+            @RequestParam int mes,
+            @RequestParam int anio) {
+        List<Producto> resultado = this.sp.historialDelMes(mes, anio);
+        List<ProductoDTO> dtos = resultado.stream()
+                .map(ProductoDTO::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
 }

@@ -20,15 +20,15 @@
 
                 value="com.mysql.cj.jdbc.Driver" />
 
-            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.user" value="${JDBC_USER}" />
 
             <property name="javax.persistence.jdbc.password"
 
-                value="root" />
+                value="${JDBC_PASSWORD}" />
 
             <property name="javax.persistence.jdbc.url"
             
-            	value="jdbc:mysql://mysql:3306/segundum.usuarios?serverTimezone=UTC" />
+            	value="${JDBC_URL}" />
                 
             <property name="eclipselink.ddl-generation"
 

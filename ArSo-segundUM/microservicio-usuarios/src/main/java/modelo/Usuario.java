@@ -20,6 +20,7 @@ public class Usuario {
     private String telefono;
     private boolean administrador;
     private int nCompras, nVentas;
+    private String githubId;
     public Usuario(){
 
     }
@@ -123,6 +124,16 @@ public class Usuario {
     public void sumarCompra() {
     	this.nCompras++;
     }
+
+	public String getGithubId() {
+		return githubId;
+	}
+
+	public void setGithubId(String githubId) {
+		this.githubId = githubId;
+	}
+    
+    
 
 	/*public String altaUsuario(String nombre, String apellidos, String email, Date fecha, String tlf) {
 		Usuario u = new Usuario(nombre,apellidos,email,fecha,tlf);

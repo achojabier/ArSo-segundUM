@@ -8,9 +8,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import modelo.Usuario;
+import repositorio.FactoriaRepositorios;
+import servicio.ServicioUsuarios;
+
 @Path("auth")
 public class ControladorAuth {
-	
+	private ServicioUsuarios servicio = new ServicioUsuarios(new FactoriaRepositorios().getRepositorioUsuarios());
 	@POST
 	@Path("/login")
 	public Response login(@FormParam("username") String username, @FormParam("password") String password) {
@@ -26,13 +30,16 @@ public class ControladorAuth {
 	}
 
 	private Map<String, Object> verificarCredenciales(String username, String password) {
+		Usuario usuario = servicio.buscar(username, password);
 		
-		// TODO: verificar las credenciales
+		if(usuario!=null) {
+			HashMap<String, Object> claims = new HashMap<String, Object>();
+			claims.put("sub", usuario.getId());
+			claims.put("roles", usuario.isAdministrador()? "ADMINISTRADOR": "USUARIO");
+			claims.put("nombre", usuario.getNombre()+" "+usuario.getApellidos());
+			return claims;
+		}
 		
-		HashMap<String, Object> claims = new HashMap<String, Object>();
-		claims.put("sub", username);
-		claims.put("roles", "PROFESOR");
-		
-		return claims;
+		return null;
 	}
 }

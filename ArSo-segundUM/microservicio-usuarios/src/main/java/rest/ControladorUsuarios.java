@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.ServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,6 +55,7 @@ public class ControladorUsuarios {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("sub", usuario.getId());
                 claims.put("roles", "USUARIO");     
+                claims.put("nombre", usuario.getNombre()+" "+usuario.getApellidos());
                 
                
                 String token = JwtUtils.generateToken(claims);
@@ -74,8 +76,7 @@ public class ControladorUsuarios {
 	}
 	
 	@GET
-	//@RolesAllowed("USUARIO")
-	@PermitAll
+	@RolesAllowed("USUARIO")	
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getListadoUsuarios(@QueryParam("email") String email, @QueryParam("clave") String clave) throws Exception {
 		
@@ -111,8 +112,7 @@ public class ControladorUsuarios {
 	
 	@GET
 	@Path("{id}")
-	//@RolesAllowed("USUARIO")
-	@PermitAll
+	@RolesAllowed("USUARIO")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUsuario(@PathParam("id") String id) throws Exception{
 		if(servicio.obtener(id)==null) {
@@ -136,10 +136,10 @@ public class ControladorUsuarios {
 	}
 	
 	@PUT
-	//@RolesAllowed("USUARIO")
-	@PermitAll
+	@RolesAllowed("USUARIO")
 	@Path("{id}")
 	public Response modificarUsuario(@PathParam("id") String id, Usuario u) {
+		//Solo puede modificarse a sí mismo, consultar eso
 		try {
 			servicio.modificarUsuario(id, u.getNombre(), u.getApellidos(), u.getClave(), u.getFechaNacimiento(), u.getTelefono());
 			return Response.status(Response.Status.NO_CONTENT).build();

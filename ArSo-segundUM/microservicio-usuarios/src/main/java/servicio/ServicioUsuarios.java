@@ -74,7 +74,7 @@ public class ServicioUsuarios {
 	    usuario.setTelefono(tlf);
 	    
 	    this.repositorioUsuarios.update(usuario);
-	    publicadorUsuarios.emitirEvento("modificar-usuario", id, nombre, apellidos, clave,null, fechaNacimiento.toString(), tlf);
+	    publicadorUsuarios.emitirEvento("usuario-modificado", id, nombre, apellidos, clave,null, fechaNacimiento.toString(), tlf);
 	}
 	
 	public Usuario buscar(String email, String password) {

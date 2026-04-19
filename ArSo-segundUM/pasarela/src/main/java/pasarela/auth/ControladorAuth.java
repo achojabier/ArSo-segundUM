@@ -28,7 +28,7 @@ public class ControladorAuth {
 
     private UsuariosRestCliente usuariosClient;
 
-    public ControladorAuth(@Value("${ZUUL_ROUTES_USUARIOS_UR}") String urlUsuarios) {
+    public ControladorAuth(@Value("${ZUUL_ROUTES_USUARIOS_URL}") String urlUsuarios) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(urlUsuarios) 
                 .addConverterFactory(JacksonConverterFactory.create())
@@ -59,6 +59,7 @@ public class ControladorAuth {
                 respuesta.put("token", token);
                 respuesta.put("identificador", claims.getSubject());
                 respuesta.put("roles", claims.get("roles"));
+                respuesta.put("nombre_completo", claims.get("nombre",String.class));
 
                 return ResponseEntity.ok(respuesta);
             } else {

@@ -27,7 +27,7 @@ services:
     build: ./microservicio-usuarios
     container_name: usuarios
     ports:
-      - "8082:8080"
+      - "8082:8082"
     environment:
       - JDBC_URL=jdbc:mysql://mysql:3306/segundum.usuarios?serverTimezone=UTC
       - JDBC_USER=root

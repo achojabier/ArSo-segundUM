@@ -110,13 +110,11 @@ public class ServicioUsuarios {
 		Usuario u = repositorioUsuarios.get(idUsuario);
 		u.sumarCompra();
 		repositorioUsuarios.update(u);
-		System.out.println("Sumando COMPRA al usuario: " + u.getNombre() + " | ID Real en BD: " + u.getId());
 	}
 	
 	public void sumarVenta(String idUsuario) {
 		Usuario u = repositorioUsuarios.get(idUsuario);
 		u.sumarVenta();
 		repositorioUsuarios.update(u);
-		System.out.println("Sumando VENTA al usuario: " + u.getNombre() + " | ID Real en BD: " + u.getId());
 	}
 }

@@ -56,7 +56,8 @@ public class ProductoDTO {
 		this.estado = estado;
 	}
 	public static ProductoDTO fromEntity(Producto p) {
-		return new ProductoDTO(p.getId(),p.getTitulo(),p.getPrecio(),p.getEstado(),p.getVendedor().getId());
+		String idVendedor = (p.getVendedor() != null) ? p.getVendedor().getId() : null;
+		return new ProductoDTO(p.getId(),p.getTitulo(),p.getPrecio(),p.getEstado(),idVendedor);
 	}
 	public String getIdVendedor() {
 		return idVendedor;

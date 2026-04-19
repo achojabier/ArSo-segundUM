@@ -21,19 +21,16 @@ public class ProductosApp {
 	@Bean
 	CommandLineRunner initCategorias(ServicioCategorias servicioCategorias) {
 		return args -> {
-			System.out.println("Buscando archivos XML de categorías en la carpeta resources/Categorias...");
-			
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 			
 			try {
 				Resource[] archivosXml = resolver.getResources("classpath*:Categorias/*.xml");
 				
 				if (archivosXml.length == 0) {
-					System.out.println("No se encontró ningún archivo XML en la carpeta Categorias.");
 				} else {
 					for (Resource archivo : archivosXml) {
 						String nombreArchivo = archivo.getFilename();
-						System.out.println("▶Procesando archivo: " + nombreArchivo);
+						System.out.println("Procesando archivo: " + nombreArchivo);
 						
 						servicioCategorias.cargarJerarquia("/Categorias/" + nombreArchivo);
 					}

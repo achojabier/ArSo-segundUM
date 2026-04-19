@@ -43,7 +43,7 @@ public class ConsumidorRabbitMQJAXRS implements ServletContextListener {
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String jsonMensaje = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                System.out.println("Usuarios recibe evento raw: " + jsonMensaje);
+                System.out.println("Usuarios recibe evento: " + jsonMensaje);
                 
                 try {
                     if (jsonMensaje.startsWith("\"")) {
@@ -77,7 +77,6 @@ public class ConsumidorRabbitMQJAXRS implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // Cuando apagues el servidor, cerramos las conexiones limpiamente
         try {
             if (channel != null && channel.isOpen()) channel.close();
             if (connection != null && connection.isOpen()) connection.close();

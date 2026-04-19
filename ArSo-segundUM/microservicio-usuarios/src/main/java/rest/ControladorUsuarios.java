@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import org.glassfish.jersey.http.HttpHeaders;
 
 import auth.Credenciales;
 import auth.JwtUtils;
+import io.jsonwebtoken.Claims;
 import modelo.UsuarioDTO;
 import rest.Listado;
 import rest.Listado.ResumenExtendido;
@@ -38,6 +40,8 @@ import servicio.ServicioUsuarios;;
 public class ControladorUsuarios {
 	FactoriaRepositorios factoria = new FactoriaRepositorios();
 	private ServicioUsuarios servicio = new ServicioUsuarios(factoria.getRepositorioUsuarios());
+	@Context
+	private HttpServletRequest servletRequest;
 	
 	@Context
 	private UriInfo uriInfo;
@@ -55,7 +59,7 @@ public class ControladorUsuarios {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("sub", usuario.getId());
                 claims.put("roles", "USUARIO");     
-                claims.put("nombre", usuario.getNombre()+" "+usuario.getApellidos());
+                claims.put("nombre_completo", usuario.getNombre()+" "+usuario.getApellidos());
                 
                
                 String token = JwtUtils.generateToken(claims);
@@ -139,7 +143,11 @@ public class ControladorUsuarios {
 	@RolesAllowed("USUARIO")
 	@Path("{id}")
 	public Response modificarUsuario(@PathParam("id") String id, Usuario u) {
-		//Solo puede modificarse a sí mismo, consultar eso
+		Claims claims = (Claims) servletRequest.getAttribute("claims");
+		String tokenId = claims.getSubject();
+		if(!tokenId.equals(id)) {
+			return Response.status(Response.Status.FORBIDDEN).entity("Solo puedes modificar tus propios datos").build();
+		}
 		try {
 			servicio.modificarUsuario(id, u.getNombre(), u.getApellidos(), u.getClave(), u.getFechaNacimiento(), u.getTelefono());
 			return Response.status(Response.Status.NO_CONTENT).build();

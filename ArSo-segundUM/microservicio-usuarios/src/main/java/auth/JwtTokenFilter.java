@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.Priority;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -41,14 +42,26 @@ public class JwtTokenFilter implements ContainerRequestFilter {
 			return; // no se controla la autorización
 		}
 
+		String token = null;
 		//Control de autorización
 		String authorization = requestContext.getHeaderString("Authorization");
 
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED)
 					.entity("No se adjunta el token correctamente").build());
-		} else {
-			String token = authorization.substring("Bearer ".length()).trim();
+		}
+		else if(servletRequest.getCookies()!=null) {
+			for(Cookie cookie: servletRequest.getCookies()) {
+				if(cookie.getName().equals("jwt")) {
+					token = cookie.getValue();
+				}
+			}
+		}
+		
+		if (token==null) {
+			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("No se adjunta el token correctamente").build());
+		}
+		else {
 			try {
 				Claims claims = JwtUtils.validateToken(token);
 				

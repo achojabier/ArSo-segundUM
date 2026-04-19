@@ -47,11 +47,11 @@ public class ServicioCategorias {
 				throw new RuntimeException("No se ha encontrado el archivo: " + ruta);
 			}
 			Categoria raiz = (Categoria) unmarshaller.unmarshal(is);
-			System.out.println("   --> XML Parseado. ID raíz: " + raiz.getId() + " | Nombre: " + raiz.getNombre());
+			System.out.println("XML Parseado. ID raíz: " + raiz.getId() + " | Nombre: " + raiz.getNombre());
 			if(!repositorioCategorias.existsById(raiz.getId())) {
 				vincularPadres(raiz);
 				repositorioCategorias.save(raiz);
-				System.out.println("   --> ✅ Guardada en base de datos la categoría: " + raiz.getNombre());
+				System.out.println(" Guardada en base de datos la categoría: " + raiz.getNombre());
 			}
 			
 		} catch (Exception e) {
